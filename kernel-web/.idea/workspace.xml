@@ -17,7 +17,7 @@
     </option>
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="ProjectId" id="1XOUJHGtH53yCcxfjJsi8Jxf8p6" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
@@ -48,7 +48,7 @@
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="settings.editor.selected.configurable" value="watcher.settings" />
+    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
     <property name="ts.external.directory.path" value="D:\Program Files\JetBrains\PyCharm 2019.2\plugins\JavaScriptLanguage\jsLanguageServicesImpl\external" />
   </component>
   <component name="RecentsManager">
@@ -110,6 +110,9 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <ignored-roots>
+      <path value="$PROJECT_DIR$" />
+    </ignored-roots>
   </component>
   <component name="WindowStateProjectService">
     <state x="552" y="179" key="#ESLint" timestamp="1580917186698">
@@ -200,10 +203,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1877" height="210" key="GridCell.Tab.3.right/0.0.1920.1040@0.0.1920.1040" timestamp="1581542288273" />
-    <state x="461" y="163" key="SettingsEditor" timestamp="1580996239915">
+    <state x="461" y="163" key="SettingsEditor" timestamp="1581549329376">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="461" y="163" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1580996239915" />
+    <state x="461" y="163" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1581549329376" />
     <state x="552" y="254" key="Vcs.Push.Dialog.v2" timestamp="1581196604962">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

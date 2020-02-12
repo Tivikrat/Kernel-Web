@@ -80,7 +80,7 @@ header a:hover, .selector a:hover {
 .grid {
   text-align: center;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(400px, auto));
+  grid-template-columns: repeat(auto-fill, minmax(300px, auto));
 }
 
 .grid-element {

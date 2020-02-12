@@ -2,10 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0281e13d-3a2c-43af-91b2-664a2cbe5d6d" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/KernelBackend.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/KernelBackend.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../kernel-web/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../kernel-web/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/upload/Tivikrat_report.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/upload/Tivikrat_report.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../kernel-web/src/css/white/main.css" beforeDir="false" afterPath="$PROJECT_DIR$/../kernel-web/src/css/white/main.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../kernel-web/src/css/white/main.css.map" beforeDir="false" afterPath="$PROJECT_DIR$/../kernel-web/src/css/white/main.css.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../kernel-web/src/css/white/main.sass" beforeDir="false" afterPath="$PROJECT_DIR$/../kernel-web/src/css/white/main.sass" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
