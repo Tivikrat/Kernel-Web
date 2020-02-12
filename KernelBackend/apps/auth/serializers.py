@@ -35,17 +35,33 @@ class LoginSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'username', 'email', 'password', 'first_name',
-                  'last_name', 'is_superuser', 'token']
+                  'last_name', 'is_superuser', 'token', "is_lab", "is_weighing", "is_guardian", "is_provider"]
         read_only_fields = ['id', 'email', 'first_name', 'last_name',
-                            'is_superuser', 'token']
+                            'is_superuser', 'token', "is_lab", "is_weighing", "is_guardian", "is_provider"]
 
     username = serializers.CharField(required=True)
     password = serializers.CharField(required=True, write_only=True)
     token = SerializerMethodField()
+    is_lab = SerializerMethodField()
+    is_weighing = SerializerMethodField()
+    is_guardian = SerializerMethodField()
+    is_provider = SerializerMethodField()
 
     def get_token(self, instance):
         token, created = Token.objects.get_or_create(user=instance)
         return token.key
+
+    def get_is_lab(self, instance):
+        return models.LabAssistant.objects.filter(user=instance).exists()
+
+    def get_is_weighing(self, instance):
+        return models.Weighing.objects.filter(user=instance).exists()
+
+    def get_is_guardian(self, instance):
+        return models.Guardian.objects.filter(user=instance).exists()
+
+    def get_is_provider(self, instance):
+        return models.Provider.objects.filter(user=instance).exists()
 
     def validate(self, attrs):
         user = User.objects.filter(username=attrs['username']).first()
