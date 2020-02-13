@@ -24,26 +24,25 @@ export default class DynamicForm extends Form {
     async handleSearchFieldChange(event) {
         const target = event.target;
         const {name, value} = target;
+        const renderer = this.searchRenderers[name];
         if (value.trim && value.trim() !== "") {
             let result = await Network.get(this.searchURLs[name] + value + "/");
             if (result.response && result.response.ok) {
-                this.setState({[this.getDataListByName(name)]: result.data});
+                this.setState({
+                    [this.getDataListByName(name)]: result.data.map(element => {
+                        return {...element, __field_name: name, __renderer: renderer}
+                    })
+                });
             }
         }
     }
 
     handleAutocompleteChange = (event, value) => {
-        if (event) {
-            let {name} = event.target;
-            console.log(event);
-            console.log(event.target);
-            if (this.autocompleteNames[name]) {
-                name = this.autocompleteNames[name];
-            }
+        if (value && value.__field_name && value.__renderer) {
             this.setState(prevState => ({
                 request_data: {
                     ...prevState.request_data,
-                    [name]: value
+                    [value.__field_name]: value.__renderer(value)
                 }
             }));
         }
@@ -52,8 +51,6 @@ export default class DynamicForm extends Form {
     handleCheck = (event) => {
         if (event) {
             let {name, checked} = event.target;
-            console.log(event);
-            console.log(event.target);
             this.setState(prevState => ({
                 request_data: {
                     ...prevState.request_data,
@@ -85,7 +82,7 @@ export default class DynamicForm extends Form {
         const value = instance ? (/*instance.initial_json ? instance.initial_json[name] : */instance[name]) : undefined;
         if (search) {
             this.searchURLs[name + "_name"] = url;
-            this.searchRenderers[name] = renderer;
+            this.searchRenderers[name + "_name"] = renderer;
             this.autocompleteNames[name] = name + "_name";
         }
         return (
@@ -95,8 +92,8 @@ export default class DynamicForm extends Form {
                     autoHighlight
                     autoSelect
                     options={this.state[this.getDataListByName(name + "_name")]}
-                    getOptionLabel={this.searchRenderers[name]}
-                    onInputChange={this.handleAutocompleteChange}
+                    getOptionLabel={this.searchRenderers[name + "_name"]}
+                    onChange={this.handleAutocompleteChange}
                     defaultValue={value}
                     name={name}
                     renderInput={params => (
@@ -155,7 +152,7 @@ export default class DynamicForm extends Form {
                         key={index}
                         style={{margin: "5px"}}
                         fullWidth
-                        inputProps={{ min: "0", max: "100", step: "0.01" }}
+                        inputProps={{min: "0", max: "100", step: "0.01"}}
                         InputLabelProps={{
                             shrink: shrink_label,
                         }}/>);
@@ -213,7 +210,6 @@ export default class DynamicForm extends Form {
         }
         fields = fields ? fields : this.fields;
         if (method === "DELETE") {
-            console.log(instance, instance.toString, instance.toString());
             return (
                 <form onSubmit={this.handleSubmit}>
                     {strings["Are you sure you want to delete"] + " " + instance.toString()}?

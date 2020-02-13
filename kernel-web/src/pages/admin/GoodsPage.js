@@ -6,7 +6,6 @@ import strings from "../../strings";
 
 export default class ElevatorsPage extends React.Component {
     renderInstance(instance) {
-        console.log(instance);
         return (
             <div>
                 <h2>{instance.name}</h2>

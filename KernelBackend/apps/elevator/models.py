@@ -64,10 +64,6 @@ class LabAnalysis(models.Model):
 class Delivery(models.Model):
     name = models.TextField(max_length=200)
     provider = models.ForeignKey(Provider, on_delete=models.CASCADE)
-    # humidity = models.FloatField()
-    # clogging = models.FloatField()
-    # gross_weight = models.FloatField()
-    # net_weight = models.FloatField()
     elevator = models.ForeignKey(Elevator, on_delete=models.CASCADE)
     to_elevator = models.BooleanField(default=False)
     date = models.DateField(null=True)

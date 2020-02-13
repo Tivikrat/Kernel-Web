@@ -42,7 +42,6 @@ class App extends React.Component {
     async get_current_user() {
         let result = await Network.get(server_routes.user);
         while (!result.response || !result.response.ok || result.error) {
-            console.log(result);
             if(result.response && result.response.status === 401) {
                 document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:01 GMT;";
             } else {
