@@ -17,7 +17,8 @@ To apply migrations on DB, use
 ### `KernelBackend\venv\Scripts\python.exe manage.py migrate`
 
 # kernel-web
-Was made using React (React App technology).
+Was made using React (React App technology). Can be opened as PyCharm project.
+
 Details, how to run this project, are best described in kernel-web\README.md (in project folder).
 Server url can be changed in kernel-web/src/server_routes.js. If backend (Django) server is not located on this address, the application will be showing loading with network error. Relocate the server to this address, or address to this server.
 
