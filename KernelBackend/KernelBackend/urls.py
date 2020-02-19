@@ -27,4 +27,5 @@ urlpatterns = [
     path('auth/', include(auth_router.urls)),
     path('statistics/', motion_report),
     path('logout/', log_out),
+    path('api-auth/', include('rest_framework.urls')),
 ]

@@ -5,6 +5,7 @@ import urllib
 from django.http import HttpResponse
 from openpyxl import load_workbook
 from rest_framework import viewsets, status
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from apps.auth.serializers import is_superuser
@@ -147,13 +148,16 @@ def process_month(sheet, index, current_date, month_index):
     sheet[f'M{index + 3}'].value = f'=SUM(M{month_index}:M{index + 1})'
 
 
+@api_view(['GET'])
 def motion_report(request):
     wb = load_workbook('report.xlsx')
     sheet = wb.get_sheet_by_name(wb.get_sheet_names()[0])
     if request.user.is_superuser:
         deliveries_by_dates = Delivery.objects.all().order_by('date')
-    else:
+    elif request.user.is_authenticated:
         deliveries_by_dates = Delivery.objects.filter(provider__user=request.user).order_by('date')
+    else:
+        deliveries_by_dates = Delivery.objects.none()
     index = 5
     month_index = 5
     months_indexes = []

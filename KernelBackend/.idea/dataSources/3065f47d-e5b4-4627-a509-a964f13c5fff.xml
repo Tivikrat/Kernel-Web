@@ -10,23 +10,23 @@
       <Owner>postgres</Owner>
       <IntrospectionStateNumber>3470</IntrospectionStateNumber>
       <Current>1</Current>
-      <Relations>sequence|table|25974|25976|1
-sequence|table|25985|25987|1
+      <Relations>sequence|table|26039|26041|1
+sequence|table|26099|26101|1
 sequence|table|25995|25997|1
 sequence|table|26003|26005|1
 sequence|table|26013|26015|1
-sequence|table|26154|26156|1
-sequence|table|26165|26167|1
-sequence|table|26173|26175|1
-sequence|table|26181|26183|1
+sequence|table|26021|26023|1
+sequence|table|26031|26033|1
+sequence|table|25974|25976|1
+sequence|table|25985|25987|1
 sequence|table|26192|26194|1
 sequence|table|26200|26202|1
 sequence|table|26208|26210|1
 sequence|table|26216|26218|1
-sequence|table|26021|26023|1
-sequence|table|26031|26033|1
-sequence|table|26039|26041|1
-sequence|table|26099|26101|1
+sequence|table|26173|26175|1
+sequence|table|26181|26183|1
+sequence|table|26154|26156|1
+sequence|table|26165|26167|1
 sequence|table|26132|26134|1
 sequence|table|26143|26145|1
 </Relations>
