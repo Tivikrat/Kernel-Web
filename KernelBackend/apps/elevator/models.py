@@ -63,14 +63,26 @@ class LabAnalysis(models.Model):
 
 class Delivery(models.Model):
     name = models.TextField(max_length=200)
+    date = models.DateField()
     provider = models.ForeignKey(Provider, on_delete=models.CASCADE)
     elevator = models.ForeignKey(Elevator, on_delete=models.CASCADE)
-    to_elevator = models.BooleanField(default=False)
-    date = models.DateField(null=True)
     weight_check = models.ForeignKey(WeightCheck, on_delete=models.SET_NULL, null=True)
     lab_analysis = models.ForeignKey(LabAnalysis, on_delete=models.SET_NULL, null=True)
-    guardian = models.ForeignKey(Guardian, on_delete=models.CASCADE, null=True)
-    lsd_number = models.TextField(max_length=200, null=True)
-    is_lsd_unhurted = models.BooleanField(null=True)
-    car_number = models.TextField(max_length=200, null=True)
-    driver_name = models.TextField(max_length=200, null=True)
+    to_elevator = models.BooleanField(default=True)
+
+
+class GuardianDelivery(models.Model):
+    name = models.TextField(max_length=200)
+    date = models.DateField()
+    elevator = models.ForeignKey(Elevator, on_delete=models.CASCADE)
+    guardian = models.ForeignKey(Guardian, on_delete=models.SET_NULL, null=True)
+    car_number = models.TextField(max_length=200)
+    trailer_number = models.TextField(max_length=200, null=True)
+    driver_name = models.TextField(max_length=200)
+    to_elevator = models.BooleanField(default=True)
+
+
+class LSD(models.Model):
+    guardian_delivery = models.ForeignKey(GuardianDelivery, on_delete=models.CASCADE, related_name="lsds", null=True)
+    number = models.TextField(max_length=100)
+    is_good = models.BooleanField()

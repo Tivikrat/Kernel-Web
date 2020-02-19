@@ -57,7 +57,7 @@ class ProviderSearchViewSet(viewsets.ModelViewSet):
         return models.Provider.objects.filter(name__contains=self.kwargs['name'])
 
 
-class StaffLSDViewSet(viewsets.ModelViewSet):
+class StaffDeliveryViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         if user.is_superuser:
@@ -70,12 +70,12 @@ class StaffLSDViewSet(viewsets.ModelViewSet):
             return models.Delivery.objects.none()
 
 
-class WeighingLSDViewSet(StaffLSDViewSet):
-    serializer_class = serializers.LSDWeighingSerializer
+class WeighingDeliveryViewSet(StaffDeliveryViewSet):
+    serializer_class = serializers.WeighingDeliverySerializer
 
 
-class WeightCheckLSDViewSet(StaffLSDViewSet):
-    serializer_class = serializers.WeightCheckLSDSerializer
+class WeightCheckDeliveryViewSet(StaffDeliveryViewSet):
+    serializer_class = serializers.WeightCheckDeliverySerializer
 
     def destroy(self, request, *args, **kwargs):
         lsd_instance = self.get_object()
@@ -88,8 +88,8 @@ class WeightCheckLSDViewSet(StaffLSDViewSet):
             return Response(status=status.HTTP_400_BAD_REQUEST, data={'non_field_errors': "Forbidden"})
 
 
-class LabAnalysisViewSet(StaffLSDViewSet):
-    serializer_class = serializers.LabAnalysisLSDSerializer
+class LabAnalysisViewSet(StaffDeliveryViewSet):
+    serializer_class = serializers.LabAnalysisDeliverySerializer
 
     def destroy(self, request, *args, **kwargs):
         lsd_instance = self.get_object()
@@ -100,6 +100,20 @@ class LabAnalysisViewSet(StaffLSDViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST, data={'non_field_errors': "Forbidden"})
+
+
+class GuardianDeliveryViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.GuardianDeliverySerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_superuser:
+            queryset = models.GuardianDelivery.objects.all()
+        elif user.is_authenticated:
+            queryset = models.GuardianDelivery.objects.filter(elevator__guardian__user=user)
+        else:
+            queryset = models.GuardianDelivery.objects.none()
+        return queryset
 
 
 def process_day(sheet, current_date, index, delivery, humidity, clogging, weight):

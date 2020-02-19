@@ -39,8 +39,8 @@ class LoginSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'email', 'first_name', 'last_name',
                             'is_superuser', 'token', "is_lab", "is_weighing", "is_guardian", "is_provider"]
 
-    username = serializers.CharField(required=True)
-    password = serializers.CharField(required=True, write_only=True)
+    username = serializers.CharField()
+    password = serializers.CharField(write_only=True)
     token = SerializerMethodField()
     is_lab = SerializerMethodField()
     is_weighing = SerializerMethodField()

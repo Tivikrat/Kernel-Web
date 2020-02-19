@@ -105,7 +105,7 @@ class ProviderSerializer(SuperuserAccessSerializer):
         return instance
 
 
-class LSDWeighingSerializer(serializers.ModelSerializer):
+class WeighingDeliverySerializer(serializers.ModelSerializer):
     provider = ProviderSerializer(read_only=True)
     provider_name = serializers.CharField(write_only=True, required=True)
     elevator = ElevatorSerializer(read_only=True)
@@ -114,7 +114,7 @@ class LSDWeighingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Delivery
-        fields = ['id', 'name', 'provider', 'elevator', 'to_elevator', 'date', 'provider_name', 'elevator_name']
+        fields = ['id', 'name', 'date', 'provider', 'elevator', 'provider_name', 'elevator_name']
 
     def validate(self, attrs):
         request = self.context.get("request")
@@ -134,6 +134,70 @@ class LSDWeighingSerializer(serializers.ModelSerializer):
         return attrs
 
 
+class LSDSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.LSD
+        fields = ['id', 'number', 'is_good']
+
+
+class GuardianDeliverySerializer(serializers.ModelSerializer):
+    lsds = LSDSerializer(many=True, required=False)
+
+    class Meta:
+        model = models.GuardianDelivery
+        fields = ['id', 'name', 'date', 'car_number', 'trailer_number', 'driver_name', 'to_elevator', 'lsds']
+
+    def validate(self, attrs):
+        lsds = attrs.get('lsds', None)
+        if lsds is not None:
+            if not isinstance(lsds, list):
+                raise ValidationError({
+                    'lsds': f'Must be a list (array) of '
+                            f'objects with "number" and "is_good" parameters '
+                            f'(and "id" if need to be changed, "delete" for deletion)'})
+            if self.context.get('request').method == "POST":
+                for lsd in lsds:
+                    if not ('number' in lsd
+                            and len(lsd['number']) > 0
+                            and 'is_good' in lsd
+                            and isinstance(lsd['is_good'], bool)):
+                        raise ValidationError({'lsds': 'Wrong lsds sequence'})
+            for lsd in lsds:
+                if 'id' in lsd:
+                    lsds_instances = models.LSD.objects.filter(id=lsd['id'])
+                    if not lsds_instances.exists():
+                        raise ValidationError({'lsds': f'LSD {lsd["id"]} does not exists'})
+                    lsd_instance: models.LSD = lsds_instances.first()
+                    if self.instance is None or lsd_instance.guardian_delivery != self.instance.id:
+                        raise ValidationError({'lsds': f'LSD {lsd["id"]} does not belong to this delivery'})
+        return attrs
+
+    def create(self, validated_data: dict):
+        lsds = validated_data.pop('lsds', None)
+        validated_data['elevator'] = models.Elevator.objects.filter(guardian__user=self.context.get('request').user).first()
+        validated_data['guardian'] = models.Guardian.objects.filter(user=self.context.get('request').user).first()
+        instance = super().create(validated_data)
+        if lsds is not None:
+            for lsd in lsds:
+                models.LSD.objects.create(**lsd, guardian_delivery=instance)
+        return instance
+
+    def update(self, instance: models.GuardianDelivery, validated_data):
+        lsds = validated_data.pop('lsds', None)
+        updated_instance = super().update(instance, validated_data)
+        for lsd in models.LSD.objects.filter(guardian_delivery=instance):
+            lsd.delete()
+        if lsds is not None:
+            for lsd in lsds:
+                if 'id' in lsd:
+                    lsd_instance: models.LSD = models.LSD.objects.filter(id=lsd['id']).first()
+                    lsd_instance.number = lsd.get('number', lsd_instance.number)
+                    lsd_instance.is_good = lsd.get('is_good', lsd_instance.is_good)
+                else:
+                    models.LSD.objects.create(**lsd, guardian_delivery=instance)
+        return updated_instance
+
+
 class WeightCheckSerializer(serializers.ModelSerializer):
     weighing = WeighingSerializer(read_only=True)
 
@@ -150,7 +214,7 @@ class LabAnalysisSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class WeightCheckLSDSerializer(serializers.ModelSerializer):
+class WeightCheckDeliverySerializer(serializers.ModelSerializer):
     gross_weight = serializers.FloatField(write_only=True)
     net_weight = serializers.FloatField(write_only=True)
     provider = ProviderSerializer(read_only=True)
@@ -194,7 +258,7 @@ class WeightCheckLSDSerializer(serializers.ModelSerializer):
         return models.Delivery.objects.get(id=instance.id)
 
 
-class LabAnalysisLSDSerializer(serializers.ModelSerializer):
+class LabAnalysisDeliverySerializer(serializers.ModelSerializer):
     humidity = serializers.FloatField(write_only=True, allow_null=False, required=True, max_value=100)
     clogging = serializers.FloatField(write_only=True, allow_null=False, required=True, max_value=100)
     provider = ProviderSerializer(read_only=True)
