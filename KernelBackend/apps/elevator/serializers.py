@@ -13,9 +13,6 @@ class GoodSerializer(SuperuserAccessSerializer):
         model = models.Good
         fields = '__all__'
 
-    def validate(self, attrs):
-        attrs['name'] = attrs.get('name', )
-
 
 class ElevatorSerializer(SuperuserAccessSerializer):
     class Meta:
@@ -105,39 +102,16 @@ class ProviderSerializer(SuperuserAccessSerializer):
         return instance
 
 
-class WeighingDeliverySerializer(serializers.ModelSerializer):
-    provider = ProviderSerializer(read_only=True)
-    provider_name = serializers.CharField(write_only=True, required=True)
-    elevator = ElevatorSerializer(read_only=True)
-    elevator_name = serializers.CharField(write_only=True, required=True)
-    date = serializers.DateField(required=True)
-
-    class Meta:
-        model = models.Delivery
-        fields = ['id', 'name', 'date', 'provider', 'elevator', 'provider_name', 'elevator_name']
-
-    def validate(self, attrs):
-        request = self.context.get("request")
-        errors = {}
-        if request.method != 'PATCH' or attrs.get('provider_name', None):
-            provider = Provider.objects.filter(name=attrs.pop('provider_name'))
-            if not provider.exists():
-                errors['provider_name'] = _("Not found")
-            attrs['provider'] = provider.first()
-        if request.method != 'PATCH' or attrs.get('elevator_name', None):
-            elevators = models.Elevator.objects.filter(name=attrs.pop('elevator_name'))
-            if not elevators.exists():
-                errors['elevator_name'] = _("Not found")
-            attrs['elevator'] = elevators.first()
-        if errors.get('provider_name') or errors.get('elevator_name'):
-            raise ValidationError(errors)
-        return attrs
-
-
 class LSDSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.LSD
         fields = ['id', 'number', 'is_good']
+
+
+class AdminGuardianDeliverySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.GuardianDelivery
+        fields = ['id', 'name', 'date', 'car_number', 'trailer_number', 'driver_name', 'to_elevator']
 
 
 class GuardianDeliverySerializer(serializers.ModelSerializer):
@@ -174,7 +148,8 @@ class GuardianDeliverySerializer(serializers.ModelSerializer):
 
     def create(self, validated_data: dict):
         lsds = validated_data.pop('lsds', None)
-        validated_data['elevator'] = models.Elevator.objects.filter(guardian__user=self.context.get('request').user).first()
+        validated_data['elevator'] = models.Elevator.objects.filter(
+            guardian__user=self.context.get('request').user).first()
         validated_data['guardian'] = models.Guardian.objects.filter(user=self.context.get('request').user).first()
         instance = super().create(validated_data)
         if lsds is not None:
@@ -212,6 +187,37 @@ class LabAnalysisSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.LabAnalysis
         fields = '__all__'
+
+
+class WeighingDeliverySerializer(serializers.ModelSerializer):
+    provider = ProviderSerializer(read_only=True)
+    provider_name = serializers.CharField(write_only=True, required=True)
+    elevator = ElevatorSerializer(read_only=True)
+    elevator_name = serializers.CharField(write_only=True, required=True)
+    weight_check = WeightCheckSerializer(read_only=True)
+    lab_analysis = LabAnalysisSerializer(read_only=True)
+
+    class Meta:
+        model = models.Delivery
+        fields = ['id', 'name', 'date', 'provider', 'elevator', 'to_elevator', 'weight_check', 'lab_analysis',
+                  'provider_name', 'elevator_name', ]
+
+    def validate(self, attrs):
+        request = self.context.get("request")
+        errors = {}
+        if request.method != 'PATCH' or attrs.get('provider_name', None):
+            provider = Provider.objects.filter(name=attrs.pop('provider_name'))
+            if not provider.exists():
+                errors['provider_name'] = _("Not found")
+            attrs['provider'] = provider.first()
+        if request.method != 'PATCH' or attrs.get('elevator_name', None):
+            elevators = models.Elevator.objects.filter(name=attrs.pop('elevator_name'))
+            if not elevators.exists():
+                errors['elevator_name'] = _("Not found")
+            attrs['elevator'] = elevators.first()
+        if errors.get('provider_name') or errors.get('elevator_name'):
+            raise ValidationError(errors)
+        return attrs
 
 
 class WeightCheckDeliverySerializer(serializers.ModelSerializer):

@@ -25,7 +25,7 @@ export default class WeightCheckPage extends React.Component {
                 <h4>{instance.provider.name}</h4>
                 <div style={{display: "flex", justifyContent: "space-evenly", alignItems: "center"}}>
                     {instance.date}
-                    <div><Checkbox checked={instance.to_elevator}/>{strings["to_elevator"]}</div>
+                    <div><Checkbox checked={instance.to_elevator} disabled/>{strings["to_elevator"]}</div>
                 </div>
                 {instance.weight_check ?
                     <div>
@@ -55,7 +55,8 @@ export default class WeightCheckPage extends React.Component {
                 fields={[
                     {name: "gross_weight", type: "number"},
                     {name: "net_weight", type: "number"}
-                ]}/>
+                ]}
+                nocreate/>
         );
     }
 }

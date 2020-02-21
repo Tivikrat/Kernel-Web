@@ -15,3 +15,5 @@ router.register('weighing_deliveries', views.WeighingDeliveryViewSet, 'weighing_
 router.register('weight_checks', views.WeightCheckDeliveryViewSet, 'weight_checks')
 router.register('lab_analysis', views.LabAnalysisViewSet, 'lab_analysis')
 router.register('guardian_deliveries', views.GuardianDeliveryViewSet, 'guardian_deliveries')
+router.register('admin_guardian_deliveries', views.AdminGuardianDeliveryViewSet, 'admin_guardian_deliveries')
+router.register('admin_weighing_deliveries', views.AdminWeighingDeliveryViewSet, 'admin_weighing_deliveries')

@@ -27,7 +27,7 @@ class ElevatorSearchViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ElevatorSerializer
 
     def get_queryset(self):
-        return models.Elevator.objects.filter(name__contains=self.kwargs['name'])
+        return models.Elevator.objects.filter(name__icontains=self.kwargs['name'])
 
 
 class LabAssistantViewSet(viewsets.ModelViewSet):
@@ -54,7 +54,7 @@ class ProviderSearchViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ProviderSerializer
 
     def get_queryset(self):
-        return models.Provider.objects.filter(name__contains=self.kwargs['name'])
+        return models.Provider.objects.filter(name__icontains=self.kwargs['name'])
 
 
 class StaffDeliveryViewSet(viewsets.ModelViewSet):
@@ -73,9 +73,27 @@ class StaffDeliveryViewSet(viewsets.ModelViewSet):
 class WeighingDeliveryViewSet(StaffDeliveryViewSet):
     serializer_class = serializers.WeighingDeliverySerializer
 
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_superuser:
+            return models.Delivery.objects.all()
+        elif user.is_authenticated:
+            return models.Delivery.objects.filter(elevator__weighing__user=user)
+        else:
+            return models.Delivery.objects.none()
 
-class WeightCheckDeliveryViewSet(StaffDeliveryViewSet):
+
+class WeightCheckDeliveryViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.WeightCheckDeliverySerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_superuser:
+            return models.Delivery.objects.all()
+        elif user.is_authenticated:
+            return models.Delivery.objects.filter(elevator__weighing__user=user, weight_check=None)
+        else:
+            return models.Delivery.objects.none()
 
     def destroy(self, request, *args, **kwargs):
         lsd_instance = self.get_object()
@@ -90,6 +108,15 @@ class WeightCheckDeliveryViewSet(StaffDeliveryViewSet):
 
 class LabAnalysisViewSet(StaffDeliveryViewSet):
     serializer_class = serializers.LabAnalysisDeliverySerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_superuser:
+            return models.Delivery.objects.all()
+        elif user.is_authenticated:
+            return models.Delivery.objects.filter(elevator__labassistant__user=user, lab_analysis=None)
+        else:
+            return models.Delivery.objects.none()
 
     def destroy(self, request, *args, **kwargs):
         lsd_instance = self.get_object()
@@ -107,10 +134,34 @@ class GuardianDeliveryViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
-        if user.is_superuser:
-            queryset = models.GuardianDelivery.objects.all()
-        elif user.is_authenticated:
+        if user.is_authenticated:
             queryset = models.GuardianDelivery.objects.filter(elevator__guardian__user=user)
+        else:
+            queryset = models.GuardianDelivery.objects.none()
+        return queryset
+
+
+class AdminWeighingDeliveryViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.WeighingDeliverySerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_superuser:
+            queryset = models.Delivery.objects.exclude(
+                name__in=models.GuardianDelivery.objects.values_list('name', flat=True))
+        else:
+            queryset = models.Delivery.objects.none()
+        return queryset
+
+
+class AdminGuardianDeliveryViewSet(viewsets.ModelViewSet):
+    serializer_class = serializers.AdminGuardianDeliverySerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_superuser:
+            queryset = models.GuardianDelivery.objects.exclude(
+                name__in=models.Delivery.objects.values_list('name', flat=True))
         else:
             queryset = models.GuardianDelivery.objects.none()
         return queryset
@@ -182,21 +233,22 @@ def motion_report(request):
         humidity = 0
         clogging = 0
         for delivery in deliveries_by_dates.all():
-            if current_date.year != delivery.date.year or current_date.month != delivery.date.month or current_date.day != delivery.date.day:
-                process_day(sheet, current_date, index, delivery, humidity, clogging, weight)
-                weight = 0
-                humidity = 0
-                clogging = 0
-                index += 1
-                if current_date.year != delivery.date.year or current_date.month != delivery.date.month:
-                    process_month(sheet, index, current_date, month_index)
-                    index += 4
-                    month_index = index
-                    months_indexes += [month_index]
-                current_date = delivery.date
-            weight += delivery.weight_check.net_weight
-            humidity += delivery.lab_analysis.humidity * delivery.weight_check.net_weight
-            clogging += delivery.lab_analysis.clogging * delivery.weight_check.net_weight
+            if delivery.weight_check is not None and delivery.lab_analysis is not None:
+                if current_date.year != delivery.date.year or current_date.month != delivery.date.month or current_date.day != delivery.date.day:
+                    process_day(sheet, current_date, index, delivery, humidity, clogging, weight)
+                    weight = 0
+                    humidity = 0
+                    clogging = 0
+                    index += 1
+                    if current_date.year != delivery.date.year or current_date.month != delivery.date.month:
+                        process_month(sheet, index, current_date, month_index)
+                        index += 4
+                        month_index = index
+                        months_indexes += [month_index]
+                    current_date = delivery.date
+                weight += delivery.weight_check.net_weight
+                humidity += delivery.lab_analysis.humidity * delivery.weight_check.net_weight
+                clogging += delivery.lab_analysis.clogging * delivery.weight_check.net_weight
         process_day(sheet, current_date, index, deliveries_by_dates.first(), humidity, clogging, weight)
         weight = 0
         humidity = 0

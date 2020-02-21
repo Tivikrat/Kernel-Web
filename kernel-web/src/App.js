@@ -27,6 +27,7 @@ import ProvidersPage from "./pages/admin/ProvidersPage";
 import WeightCheckPage from "./pages/weighing/WeightCheckPage";
 import LabAnalysisPage from "./pages/lab/LabAnalysisPage";
 import LabPage from "./pages/lab/LabPage";
+import MainPage from "./pages/MainPage";
 
 class App extends React.Component {
     constructor(props) {
@@ -63,9 +64,10 @@ class App extends React.Component {
                 <div className="App" style={{display: "flex", flexDirection: "column"}}>
                     <Header user={user}/>
                     <Switch>
+                        <Route exact path="/"><MainPage/></Route>
                         <Route exact path={routes.user.login}><LoginPage/></Route>
                         <Route exact path={routes.user.logout}><LogoutPage/></Route>
-                        <Route exact path={routes.user.register}><RegisterPage/></Route>
+                        {/*<Route exact path={routes.user.register}><RegisterPage/></Route>*/}
                         <Route exact path={routes.admin.cabinet}><AdminPage/></Route>
                         <Route exact path={routes.admin.confirm_provider_registration}><AdminConfirmPage/></Route>
                         <Route exact path={routes.admin.elevators}><ElevatorsPage/></Route>

@@ -58,7 +58,7 @@ export default class CRUDGrid extends React.Component {
     }
 
     render() {
-        const {fields, url, reader, instanceChangeable, title} = this.props;
+        const {fields, url, reader, instanceChangeable, title, nocreate} = this.props;
         const {instances, error} = this.state;
         if (instances) {
             const elements = instances.map(instance => {
@@ -84,7 +84,7 @@ export default class CRUDGrid extends React.Component {
                 <div>
                     <h1>{title}</h1>
                     <div className="grid">
-                        {creation_element}
+                        {nocreate ? undefined : creation_element}
                         {elements}
                     </div>
                 </div>

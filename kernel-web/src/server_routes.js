@@ -12,7 +12,7 @@ const routes = {
     weighings: "/api/weighings/",
     guardians: "/api/guardians/",
     providers: "/api/providers/",
-    weighing_waybills: "/api/weighing_lsds/",
+    weighing_waybills: "/api/weighing_deliveries/",
     weight_checks: "/api/weight_checks/",
     lab_analysis: "/api/lab_analysis/",
     statistics: "/statistics/"

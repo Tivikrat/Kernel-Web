@@ -27,7 +27,7 @@ export default class WaybillsPage extends React.Component {
                 <h4>{instance.provider.name}</h4>
                 <div style={{display: "flex", justifyContent: "space-evenly", alignItems: "center"}}>
                     {instance.date}
-                    <div><Checkbox checked={instance.to_elevator}/>{strings["to_elevator"]}</div>
+                    <div><Checkbox checked={instance.to_elevator} disabled/>{strings["to_elevator"]}</div>
                 </div>
                 {instance.weight_check ?
                     <div>
@@ -39,7 +39,9 @@ export default class WaybillsPage extends React.Component {
                 {instance.lab_analysis ?
                     <div>
                         <h5>{strings["Laboratory analysis"]}</h5>
-                        <p>{strings["Laboratory assistant"]}: {instance.lab_analysis.laboratory_assistant.user.getName()}</p>
+                        {instance.lab_analysis.laboratory_assistant ?
+                            <p>{strings["Laboratory assistant"]}: {instance.lab_analysis.laboratory_assistant.user.getName()}</p>
+                            : undefined}
                         <p>{strings["humidity"]}: {instance.lab_analysis.humidity} %</p>
                         <p>{strings["clogging"]}: {instance.lab_analysis.clogging} %</p>
                     </div> : undefined}

@@ -13,7 +13,7 @@ export default class LabAnalysisPage extends React.Component {
                 <h4>{instance.provider.name}</h4>
                 <div style={{display: "flex", justifyContent: "space-evenly", alignItems: "center"}}>
                     {instance.date}
-                    <div><Checkbox checked={instance.to_elevator}/>{strings["to_elevator"]}</div>
+                    <div><Checkbox checked={instance.to_elevator} disabled/>{strings["to_elevator"]}</div>
                 </div>
                 {instance.weight_check ?
                     <div>
@@ -43,7 +43,8 @@ export default class LabAnalysisPage extends React.Component {
                 fields={[
                     {name: "humidity", type: "number"},
                     {name: "clogging", type: "number"}
-                ]}/>
+                ]}
+                nocreate/>
         );
     }
 }

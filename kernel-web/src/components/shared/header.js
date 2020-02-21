@@ -28,9 +28,9 @@ export default class Header extends React.Component {
                     {is_provider ? (
                         <Link to={routes.provider.cabinet}>{strings["Providing"]}</Link>
                     ) : undefined}
-                    {token ? (
-                        <Link to={routes.user.profile}>{strings["Profile"]}</Link>
-                    ) : <Link to={routes.user.register}>{strings["Register"]}</Link>}
+                    {/*{token ? (*/}
+                    {/*    <Link to={routes.user.profile}>{strings["Profile"]}</Link>*/}
+                    {/*) : undefined /*<Link to={routes.user.register}>{strings["Register"]}</Link>*!/*/}
                     {token ? (
                         <Link to={routes.user.logout}>{strings["Log out"]}</Link>
                     ) : <Link to={routes.user.login}>{strings["Log in"]}</Link>}

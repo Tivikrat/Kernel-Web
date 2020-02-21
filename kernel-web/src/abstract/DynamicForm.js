@@ -116,15 +116,6 @@ export default class DynamicForm extends Form {
                                    }}/>
                     )}
                 />
-                //     <SearchTextField
-                //         index={index}
-                //         name={name}
-                //         error={error}
-                //         label={label}
-                //         value={value}
-                //         multiline={multiline}
-                //         shrink_label={shrink_label}
-                //         onChange={this.handleTextFieldChange}/>
                 :
                 type === "checkbox" ?
                     <div>
@@ -152,7 +143,7 @@ export default class DynamicForm extends Form {
                         key={index}
                         style={{margin: "5px"}}
                         fullWidth
-                        inputProps={{min: "0", max: "100", step: "0.01"}}
+                        inputProps={{min: "0", step: "0.01"}}
                         InputLabelProps={{
                             shrink: shrink_label,
                         }}/>);
